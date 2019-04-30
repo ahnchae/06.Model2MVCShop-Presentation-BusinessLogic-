@@ -33,6 +33,9 @@ public class Purchase {
 		this.divyAddr = divyAddr;
 	}
 	public String getDivyDate() {
+		if(divyDate!=null && divyDate.contains(" ")) {
+			return divyDate.split(" ")[0];
+		}
 		return divyDate;
 	}
 	public void setDivyDate(String divyDate) {
