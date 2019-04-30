@@ -69,6 +69,8 @@ public class ProductController {
 				cookie.setValue(cookie.getValue()+","+prodNo);
 			}
 			response.addCookie(cookie);
+		}else {
+			response.addCookie(new Cookie("history", new Integer(prodNo).toString()));
 		}
 		
 		if(menu!=null && menu.equals("manage")) {
