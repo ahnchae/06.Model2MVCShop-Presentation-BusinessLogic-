@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.model2.mvc.common.Page;
 import com.model2.mvc.common.Search;
@@ -51,10 +52,11 @@ public class PurchaseController {
 	}
 	
 	@RequestMapping("/addPurchaseView.do")
-	public String addPurchaseView(@RequestParam("prodNo") int prodNo, Model model) throws Exception{
+	public ModelAndView addPurchaseView(@RequestParam("prodNo") int prodNo) throws Exception{
 		System.out.println("/addPurchaseView.do");
-		model.addAttribute("product", productService.getProduct(prodNo));
-		return "forward:/purchase/addPurchaseView.jsp";
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.addObject("product", productService.getProduct(prodNo));
+		return modelAndView;
 	}
 	
 	@RequestMapping("/addPurchase.do")
