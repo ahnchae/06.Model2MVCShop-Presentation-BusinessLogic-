@@ -56,24 +56,27 @@ public class PurchaseController {
 		System.out.println("/addPurchaseView.do");
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.addObject("product", productService.getProduct(prodNo));
+		modelAndView.setViewName("forward:/purchase/addPurchaseView.jsp");
 		return modelAndView;
 	}
 	
 	@RequestMapping("/addPurchase.do")
-	public String addPurchase(@ModelAttribute("purchase") Purchase purchase, @RequestParam("prodNo") int prodNo, @RequestParam("buyerId") String userId) throws Exception{
+	public ModelAndView addPurchase(@ModelAttribute("purchase") Purchase purchase, @RequestParam("prodNo") int prodNo, @RequestParam("buyerId") String userId) throws Exception{
 		System.out.println("/addPurchase.do");
 		purchase.setPurchaseProd(productService.getProduct(prodNo));
 		purchase.setBuyer(userService.getUser(userId));
 		purchase.setTranCode("2  ");
-		
 		purchaseService.addPurchase(purchase);
-		purchase=purchaseService.getPurchase2(prodNo);
 		
-		return "forward:/purchase/addPurchase.jsp";
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.setViewName("forward:/purchase/addPurchase.jsp");
+		modelAndView.addObject("purchase",purchaseService.getPurchase2(prodNo));
+		
+		return modelAndView;
 	}
 	
 	@RequestMapping("/listPurchase.do")
-	public String listPurchase(@ModelAttribute("search") Search search, HttpSession session, Model model) throws Exception{
+	public ModelAndView listPurchase(@ModelAttribute("search") Search search, HttpSession session) throws Exception{
 		System.out.println("/listPurchase.do");
 	
 		if(search.getCurrentPage()==0) {
@@ -86,66 +89,78 @@ public class PurchaseController {
 		Page resultPage = new Page( search.getCurrentPage(), ((Integer)map.get("totalCount")).intValue(), pageUnit, pageSize);
 		System.out.println(resultPage);
 		
-		model.addAttribute("list", map.get("list"));
-		model.addAttribute("resultPage", resultPage);
-		model.addAttribute("search", search);
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.setViewName("forward:/purchase/listPurchase.jsp");
+		modelAndView.addObject("list", map.get("list"));
+		modelAndView.addObject("resultPage", resultPage);
+		modelAndView.addObject("search", search);
 		
-		return "forward:/purchase/listPurchase.jsp";
+		return modelAndView;
 	}
 	
 	@RequestMapping("/getPurchase.do")
-	public String getPurchase(@RequestParam("tranNo") int tranNo, Model model) throws Exception{
+	public ModelAndView getPurchase(@RequestParam("tranNo") int tranNo) throws Exception{
 		System.out.println("/getPurchase.do");
-		model.addAttribute("purchase", purchaseService.getPurchase(tranNo));
 		
-		return "forward:/purchase/getPurchase.jsp";
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.setViewName("forward:/purchase/getPurchase.jsp");
+		modelAndView.addObject("purchase", purchaseService.getPurchase(tranNo));
+		
+		return modelAndView;
 	}
 	
 	@RequestMapping("/updatePurchaseView.do")
-	public String updatePurchaseView(@RequestParam("tranNo") int tranNo, Model model) throws Exception{
+	public ModelAndView updatePurchaseView(@RequestParam("tranNo") int tranNo) throws Exception{
 		System.out.println("/updatePurchaseView.do");
-		model.addAttribute("purchase", purchaseService.getPurchase(tranNo));
 		
-		return "forward:/purchase/updatePurchaseView.jsp";
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.addObject("purchase", purchaseService.getPurchase(tranNo));
+		modelAndView.setViewName("forward:/purchase/updatePurchaseView.jsp");
+		return modelAndView;
 	}
 	
 	@RequestMapping("/updatePurchase.do")
-	public String updatePurchase(@ModelAttribute("purchase") Purchase purchase, @RequestParam("tranNo") int tranNo, Model model) throws Exception{
+	public ModelAndView updatePurchase(@ModelAttribute("purchase") Purchase purchase, @RequestParam("tranNo") int tranNo) throws Exception{
 		System.out.println("/updatePurchase.do");
 		purchase.setPurchaseProd(purchaseService.getPurchase(tranNo).getPurchaseProd());
 		
 		purchaseService.updatePurchase(purchase);
 		
-		model.addAttribute("purchase", purchaseService.getPurchase(tranNo));
-		return "forward:/purchase/getPurchase.jsp";
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.setViewName("forward:/purchase/getPurchase.jsp");
+		modelAndView.addObject("purchase", purchaseService.getPurchase(tranNo));
+		return modelAndView;
 	}
 	
 	@RequestMapping("/deletePurchase.do")
-	public String deletePurchase(@RequestParam("tranNo") int tranNo) throws Exception{
+	public ModelAndView deletePurchase(@RequestParam("tranNo") int tranNo) throws Exception{
 		System.out.println("/deletePurchase.do");
 
 		purchaseService.deletePurchase(purchaseService.getPurchase(tranNo));
-		
-		return "redirect:/listPurchase.do";
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.setViewName("redirect:/listPurchase.do");
+		return modelAndView;
 	}
 	
 	@RequestMapping("/updateTranCode.do")
-	public String updateTranCode(@RequestParam("tranNo") int tranNo) throws Exception{
+	public ModelAndView updateTranCode(@RequestParam("tranNo") int tranNo) throws Exception{
 		System.out.println("/updateTranCode.do");
 		Purchase purchase = purchaseService.getPurchase(tranNo);
 		purchase.setTranCode("4  ");
 		purchaseService.updateTranCode(purchase);
-		
-		return "redirect:/listPurchase.do";
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.setViewName("redirect:/listPurchase.do");
+		return modelAndView;
 	}
 	
 	@RequestMapping("/updateTranCodeByProd.do")
-	public String updateTranCodeByProd(@RequestParam("prodNo") int prodNo) throws Exception{
+	public ModelAndView updateTranCodeByProd(@RequestParam("prodNo") int prodNo) throws Exception{
 		System.out.println("/updateTranCodeByProd.do");
 		Purchase purchase = purchaseService.getPurchase2(prodNo);
 		purchase.setTranCode("3  ");
 		purchaseService.updateTranCode(purchase);
-		
-		return "redirect:/listProduct.do?menu=manage";
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.setViewName("redirect:/listProduct.do?menu=manage");
+		return modelAndView;
 	}
 }
